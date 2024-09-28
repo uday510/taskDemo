@@ -3,6 +3,7 @@ package dev.mounika.TaskManagement.service;
 import dev.mounika.TaskManagement.dto.CreateTaskRequestDTO;
 import dev.mounika.TaskManagement.dto.TaskResponseDTO;
 import dev.mounika.TaskManagement.entity.Task;
+import dev.mounika.TaskManagement.entity.TaskPriority;
 import dev.mounika.TaskManagement.entity.TaskStatus;
 import dev.mounika.TaskManagement.entity.User;
 import dev.mounika.TaskManagement.exception.ResourceNotFoundException;
@@ -13,6 +14,7 @@ import dev.mounika.TaskManagement.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +44,7 @@ public class TaskServiceImp implements TaskService {
             task.setTitle(taskRequestDTO.getTitle());
             task.setDescription(taskRequestDTO.getDescription());
             task.setStatus(TaskStatus.IN_PROGRESS);
-            task.setPriority(taskRequestDTO.getPriority());
+            task.setTaskPriority(taskRequestDTO.getTaskPriority());
             task.setDueDate(taskRequestDTO.getDuedate());
             task.setUser(userOptional.get());
 
@@ -55,20 +57,47 @@ public class TaskServiceImp implements TaskService {
     }
 
     @Override
-    public List<TaskResponseDTO> getAllTasks(int userId) {
-        // Fetch the user first to ensure they exist
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public TaskResponseDTO updateTask(UUID taskId, CreateTaskRequestDTO oldTask) {
 
-        // Fetch tasks by the user
-        List<Task> tasks = taskRepository.findByUser(userId);
-        List<TaskResponseDTO> taskResponseDTOS = new ArrayList<>();
+        // Fetch the task first to ensure it exists
+        Task savedTask = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found for id " + taskId));
 
-        for (Task task : tasks) {
-            taskResponseDTOS.add(TaskEntityDTOMapper.convertTaskEntityToTaskResponseDTO(task));
+
+        if (oldTask.getTitle() != null) {
+            savedTask.setTitle(oldTask.getTitle());
         }
-        return taskResponseDTOS;
-    }
+        if (oldTask.getDescription() != null) {
+            savedTask.setDescription(oldTask.getDescription());
+        }
+        if (oldTask.getStatus() != null) {
+            savedTask.setStatus(oldTask.getStatus());
+        }
+        if (oldTask.getTaskPriority() != null) {
+            savedTask.setTaskPriority(oldTask.getTaskPriority());
+        }
+        if (oldTask.getDuedate() != null) {
+            savedTask.setDueDate(oldTask.getDuedate());
+        }
+
+        savedTask = taskRepository.save(savedTask);
+        return TaskEntityDTOMapper.convertTaskEntityToTaskResponseDTO(savedTask);
+
+//    @Override
+//    public List<TaskResponseDTO> getAllTasks(int userId) {
+//        // Fetch the user first to ensure they exist
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        // Fetch tasks by the user
+//        List<Task> tasks = taskRepository.findByUser(userId);
+//        List<TaskResponseDTO> taskResponseDTOS = new ArrayList<>();
+//
+//        for (Task task : tasks) {
+//            taskResponseDTOS.add(TaskEntityDTOMapper.convertTaskEntityToTaskResponseDTO(task));
+//        }
+//        return taskResponseDTOS;
+//    }
 
 //    @Override
 //    public TaskResponseDTO updateTask(UUID taskId, CreateTaskRequestDTO taskRequestDTO) {
@@ -94,4 +123,49 @@ public class TaskServiceImp implements TaskService {
 //        taskRepository.deleteById(taskId);
 //        return true;
 //    }
+    }
+
+    @Override
+    public Boolean deleteTask(UUID taskId) {
+        if (!taskRepository.existsById(taskId)) {
+            throw new TaskNotFoundException("Task not found for id " + taskId);
+        }
+        taskRepository.deleteById(taskId);
+        return true;
+    }
+
+    @Override
+    public List<TaskResponseDTO> getAllTasks(UUID userId) {
+        // Fetch the user first to ensure they exist
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Fetch tasks by the user
+        List<Task> tasks = taskRepository.findByUserId(userId);
+        List<TaskResponseDTO> taskResponseDTOS = new ArrayList<>();
+        for (Task task : tasks) {
+            taskResponseDTOS.add(TaskEntityDTOMapper.convertTaskEntityToTaskResponseDTO(task));
+        }
+        return taskResponseDTOS;
+    }
+
+    @Override
+    public List<TaskResponseDTO> searchTasks(String keyword) {
+        List<Task> tasks = taskRepository.searchTasksByTitleOrDescription(keyword);
+        List<TaskResponseDTO> taskResponseDTOS = new ArrayList<>();
+        for (Task task : tasks) {
+            taskResponseDTOS.add(TaskEntityDTOMapper.convertTaskEntityToTaskResponseDTO(task));
+        }
+        return taskResponseDTOS;
+    }
+
+    @Override
+    public List<TaskResponseDTO> filterTasks(TaskStatus status, TaskPriority priority, LocalDate dueDate) {
+        List<Task> tasks = taskRepository.filterTasks(status, priority, dueDate);
+        List<TaskResponseDTO> taskResponseDTOS = new ArrayList<>();
+        for (Task task : tasks) {
+            taskResponseDTOS.add(TaskEntityDTOMapper.convertTaskEntityToTaskResponseDTO(task));
+        }
+        return taskResponseDTOS;
+    }
 }

@@ -18,7 +18,7 @@ import java.util.UUID;
 public class BaseModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private UUID id;
     @CreationTimestamp
     private Instant createdAt;
     @UpdateTimestamp

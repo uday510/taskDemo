@@ -16,11 +16,11 @@ public class Task extends BaseModel {
     private TaskStatus status;
 
     @Enumerated(EnumType.STRING)
-    private Priority priority;
+    private TaskPriority taskPriority;
 
     private Instant dueDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false) // Ensure foreign key relationship with User
-    private User user; // Change to User type
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

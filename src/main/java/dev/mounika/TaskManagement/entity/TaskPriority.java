@@ -1,5 +1,5 @@
 package dev.mounika.TaskManagement.entity;
 
-public enum Priority {
+public enum TaskPriority {
     LOW, MEDIUM, HIGH;
 }
