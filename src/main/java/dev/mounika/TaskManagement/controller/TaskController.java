@@ -18,17 +18,17 @@ public class TaskController {
 
     // Create a new task
     @PostMapping("/create")
-    public ResponseEntity<TaskResponseDTO> createTask(CreateTaskRequestDTO createTaskRequestDTO) {
+    public ResponseEntity<TaskResponseDTO> createTask(@RequestBody CreateTaskRequestDTO createTaskRequestDTO) {
         return ResponseEntity.ok(taskService.createTask(createTaskRequestDTO));
     }
 
-//    // Get all tasks for a user
-//    @GetMapping("/user/{userId}")
-//    public ResponseEntity<List<TaskResponseDTO>> getAllTasksByUser(@PathVariable UUID userId) {
-//        List<TaskResponseDTO> tasks = taskService.getAllTasks(userId);
-//        return ResponseEntity.ok(tasks);
-//    }
-//
+    // Get all tasks for a user
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<TaskResponseDTO>> getAllTasksByUser(@PathVariable int userId) {
+        List<TaskResponseDTO> tasks = taskService.getAllTasks(userId);
+        return ResponseEntity.ok(tasks);
+    }
+
 //    // Update a task
 //    @PutMapping("/update/{taskId}")
 //    public ResponseEntity<TaskResponseDTO> updateTask(@PathVariable UUID taskId, @RequestBody CreateTaskRequestDTO taskDetails) {

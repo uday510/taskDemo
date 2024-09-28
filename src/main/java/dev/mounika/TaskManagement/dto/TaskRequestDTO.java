@@ -2,13 +2,12 @@ package dev.mounika.TaskManagement.dto;
 
 import dev.mounika.TaskManagement.entity.Priority;
 import dev.mounika.TaskManagement.entity.TaskStatus;
-import dev.mounika.TaskManagement.entity.User;
-import jakarta.persistence.ManyToOne;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
-import java.util.UUID;
-
+@Getter
+@Setter
 public class TaskRequestDTO {
     private String Title;
     private String Description;

@@ -5,6 +5,7 @@ import dev.mounika.TaskManagement.dto.TaskResponseDTO;
 import dev.mounika.TaskManagement.entity.Task;
 import dev.mounika.TaskManagement.entity.TaskStatus;
 import dev.mounika.TaskManagement.entity.User;
+import dev.mounika.TaskManagement.exception.ResourceNotFoundException;
 import dev.mounika.TaskManagement.exception.TaskNotFoundException;
 import dev.mounika.TaskManagement.mapper.TaskEntityDTOMapper;
 import dev.mounika.TaskManagement.repository.TaskRepository;
@@ -31,7 +32,9 @@ public class TaskServiceImp implements TaskService {
         // Find the user by userId
         Optional<User> userOptional = userRepository.findById(taskRequestDTO.getUserID());
         System.out.println("User ID to fetch: " + taskRequestDTO.getUserID());
-
+        if (!userOptional.isPresent()) {
+            throw new ResourceNotFoundException("User not found with ID: " + taskRequestDTO.getUserID());
+        }
 
         if (userOptional.isPresent()) {
             // Create a new Task entity from the request DTO
@@ -50,23 +53,23 @@ public class TaskServiceImp implements TaskService {
             throw new RuntimeException("User not found");
         }
     }
-//
-//    @Override
-//    public List<TaskResponseDTO> getAllTasks(UUID userId) {
-//        // Fetch the user first to ensure they exist
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        // Fetch tasks by the user
-//        List<Task> tasks = taskRepository.findByUser(userId);
-//        List<TaskResponseDTO> taskResponseDTOS = new ArrayList<>();
-//
-//        for (Task task : tasks) {
-//            taskResponseDTOS.add(TaskEntityDTOMapper.convertTaskEntityToTaskResponseDTO(task));
-//        }
-//        return taskResponseDTOS;
-//    }
-//
+
+    @Override
+    public List<TaskResponseDTO> getAllTasks(int userId) {
+        // Fetch the user first to ensure they exist
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Fetch tasks by the user
+        List<Task> tasks = taskRepository.findByUser(userId);
+        List<TaskResponseDTO> taskResponseDTOS = new ArrayList<>();
+
+        for (Task task : tasks) {
+            taskResponseDTOS.add(TaskEntityDTOMapper.convertTaskEntityToTaskResponseDTO(task));
+        }
+        return taskResponseDTOS;
+    }
+
 //    @Override
 //    public TaskResponseDTO updateTask(UUID taskId, CreateTaskRequestDTO taskRequestDTO) {
 //        Task savedTask = taskRepository.findById(taskId)
