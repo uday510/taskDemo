@@ -15,5 +15,5 @@ public class CreateTaskRequestDTO {
     private TaskStatus status;
     private Priority priority;
     private Instant duedate;
-    private UUID userId;
+    private int userID;
 }

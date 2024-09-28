@@ -12,13 +12,12 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 @Repository
+public interface TaskRepository extends JpaRepository<Task, Integer> {
+    // Find tasks by user
+    List<Task> findByUser(User user);
 
-public interface TaskRepository extends JpaRepository<Task, UUID> {
-
-    // Find tasks by the user entity
-    List<Task> findByUser(UUID userId);
-
+    // If you want to find by user ID, you can define it like this
+    List<Task> findByUserId(int userId);
 }
-

@@ -3,6 +3,7 @@ package dev.mounika.TaskManagement.service;
 import dev.mounika.TaskManagement.dto.CreateTaskRequestDTO;
 import dev.mounika.TaskManagement.dto.TaskResponseDTO;
 import dev.mounika.TaskManagement.entity.Task;
+import dev.mounika.TaskManagement.entity.TaskStatus;
 import dev.mounika.TaskManagement.entity.User;
 import dev.mounika.TaskManagement.exception.TaskNotFoundException;
 import dev.mounika.TaskManagement.mapper.TaskEntityDTOMapper;
@@ -28,17 +29,19 @@ public class TaskServiceImp implements TaskService {
     @Override
     public TaskResponseDTO createTask(CreateTaskRequestDTO taskRequestDTO) {
         // Find the user by userId
-        Optional<User> userOptional = userRepository.findById(taskRequestDTO.getUserId());
+        Optional<User> userOptional = userRepository.findById(taskRequestDTO.getUserID());
+        System.out.println("User ID to fetch: " + taskRequestDTO.getUserID());
+
 
         if (userOptional.isPresent()) {
             // Create a new Task entity from the request DTO
             Task task = new Task();
             task.setTitle(taskRequestDTO.getTitle());
             task.setDescription(taskRequestDTO.getDescription());
-            task.setStatus(taskRequestDTO.getStatus());
+            task.setStatus(TaskStatus.IN_PROGRESS);
             task.setPriority(taskRequestDTO.getPriority());
             task.setDueDate(taskRequestDTO.getDuedate());
-            task.setUserid(taskRequestDTO.getUserId());
+            task.setUser(userOptional.get());
 
             // Save the task to the repository
             Task savedTask = taskRepository.save(task);

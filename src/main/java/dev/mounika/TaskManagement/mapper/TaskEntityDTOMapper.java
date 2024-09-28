@@ -14,7 +14,7 @@ public class TaskEntityDTOMapper {
         taskResponseDTO.setStatus(TaskStatus.IN_PROGRESS);
         taskResponseDTO.setPriority(task.getPriority());
         taskResponseDTO.setDuedate(task.getDueDate());
-        taskResponseDTO.setUserid(task.getUserid());
+        taskResponseDTO.setUserID(task.getUser().getId());
         return taskResponseDTO;
     }
     public static TaskResponseDTO convertTaskEntityToTaskResponseDTO(Task task) {
@@ -24,7 +24,7 @@ public class TaskEntityDTOMapper {
         taskResponseDTO.setStatus(TaskStatus.IN_PROGRESS);
         taskResponseDTO.setPriority(task.getPriority());
         taskResponseDTO.setDuedate(task.getDueDate());
-        taskResponseDTO.setUserid(task.getUserid());
+        taskResponseDTO.setUserID(task.getUser().getId());
         return taskResponseDTO;
     }
 
